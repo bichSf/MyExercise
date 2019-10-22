@@ -58,4 +58,13 @@ public class AddressModel {
     public void setGeo(GeoModel geo) {
         this.geo = geo;
     }
+
+    @Override
+    public String toString() {
+        return "street='" + street + '\'' +
+                ", suite='" + suite + '\'' +
+                ", city='" + city + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                ", geo{" + geo +'}';
+    }
 }

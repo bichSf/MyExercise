@@ -38,4 +38,11 @@ public class CompanyModel {
     public void setBs(String bs) {
         this.bs = bs;
     }
+
+    @Override
+    public String toString() {
+        return "name='" + name + '\'' +
+                ", catchPhrase='" + catchPhrase + '\'' +
+                ", bs='" + bs;
+    }
 }

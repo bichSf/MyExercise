@@ -13,16 +13,21 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static android.widget.Toast.makeText;
+
 public class MainActivity extends AppCompatActivity {
 
     ListView listUser;
     ArrayList<UserModel> arrayUser;
+    ArrayList<String> arrayNameUser;
     UserModel user;
     AddressModel address;
     GeoModel geo;
@@ -44,11 +49,13 @@ public class MainActivity extends AppCompatActivity {
         listUser = (ListView) findViewById(R.id.listUser);
 
         arrayUser = new ArrayList<>();
+        arrayNameUser = new ArrayList<>();
 
-        new DownloadTask().execute();
+        DownloadTask str = new DownloadTask();
+        str.execute("https://jsonplaceholder.typicode.com/users");
 
         try {
-            String jsonString = "";
+            String jsonString ="";
             JSONArray jArr = new JSONArray(jsonString);
 
             for (int i = 0; i < jArr.length(); i++) {
@@ -80,51 +87,52 @@ public class MainActivity extends AppCompatActivity {
                 user.setCompany(company);
 
                 this.arrayUser.add(user);
+                this.arrayNameUser.add(user.getName());
             }
+
+            ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, arrayUser);
+
+            listUser.setAdapter(adapter);
+
+//            listUser.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//                @Override
+//                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long id) {
+//                    makeText(MainActivity.this, arrayUser.get(i), Toast.LENGTH_SHORT).show();
+//                    return false;
+//                }
+//            });
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-//        listUser.setOnLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                Toast.makeText(MainActivity.this, arrayUser.get(i), Toast.LENGTH_SHORT).show();
-//                return false;
-//            }
-//        });
+
     }
 
-    private class DownloadTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                URL url = new URL("https://jsonplaceholder.typicode.com/users");
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("GET");
+    private class DownloadTask extends AsyncTask<String, Void, String> {
 
-                int responseCode = con.getResponseCode();
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuffer response = new StringBuffer();
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                int responseCode = connection.getResponseCode();
                 Log.v("TAG", "Response code: " + responseCode);
 
-                InputStream inputStream = con.getInputStream();
-                OutputStream outputStream = openFileOutput("users.json", MODE_PRIVATE);
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
 
-                byte[] buffer = new byte[1024];
-                int len;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
 
-                while ((len = inputStream.read(buffer)) > 0)
-                    outputStream.write(buffer, 0, len);
-
-                Log.v("TAG", String.valueOf(buffer));
-
-                outputStream.close();
-                inputStream.close();
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            return null;
+            return response.toString();
         }
     }
-
 }

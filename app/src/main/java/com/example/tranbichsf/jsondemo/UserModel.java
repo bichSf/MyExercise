@@ -90,4 +90,18 @@ public class UserModel {
     public void setCompany(CompanyModel company) {
         this.company = company;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", address{" + address + '}' +
+                ", phone='" + phone + '\'' +
+                ", website='" + website + '\'' +
+                ", company{" + company +'}' +
+                '}';
+    }
 }

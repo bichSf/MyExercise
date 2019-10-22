@@ -28,4 +28,10 @@ public class GeoModel {
     public void setLng(double lng) {
         this.lng = lng;
     }
+
+    @Override
+    public String toString() {
+        return "lat=" + lat +
+                ", lng=" + lng;
+    }
 }
