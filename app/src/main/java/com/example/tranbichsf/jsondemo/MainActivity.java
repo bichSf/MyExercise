@@ -4,24 +4,19 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.google.gson.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
-import static android.widget.Toast.makeText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
         str.execute("https://jsonplaceholder.typicode.com/users");
 
         try {
-            String jsonString ="";
+            Gson gson = new Gson();
+            String jsonString = gson.toJson(str);
+
             JSONArray jArr = new JSONArray(jsonString);
 
             for (int i = 0; i < jArr.length(); i++) {
